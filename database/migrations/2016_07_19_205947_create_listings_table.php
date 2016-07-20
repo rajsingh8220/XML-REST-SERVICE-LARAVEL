@@ -26,7 +26,7 @@ class CreateListingsTable extends Migration
             $table->string('ListingStatus');
             $table->text('ListingDescription');
             
-            
+            $table->unique('ListingKey');
             
             $table->timestamps();
             

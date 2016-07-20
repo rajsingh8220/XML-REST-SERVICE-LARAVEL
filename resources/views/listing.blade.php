@@ -30,7 +30,7 @@ Home:Welcome page
                     {{$listing->address->PostalCode}}, 
                     {{$listing->address->Country}}
                 </td>
-                <td>City:{{$listing->ListingDescription}}</td>
+                <td>{{$listing->ListingDescription}}</td>
                 <td>{{$listing->ListingStatus}}</td>
                 <td><a href="" class="btn btn-primary btn-sm">Detail</a></td>
             </tr>

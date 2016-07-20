@@ -23,7 +23,7 @@ class HomeController extends Controller{
             $mime = $request->file('xml_file')->getMimeType();
             $mime = explode("/", $mime);
             $data['mime'] = $mime[1];
-            
+            $data['saveMsg'] = "failed";
             if($mime[1]=="xml"){
                 $data['message'] = "Data uploaded";
                 $data['status'] = "success";
@@ -36,6 +36,7 @@ class HomeController extends Controller{
                 //If there will be enough time then i will check duplicate date upload
                 
                 $save = $this->saveData($xmlArray);
+                $data['saveMsg'] = $save;
             }
             else{
                 $data['message'] = "Only XML file allowed (.xml)";
@@ -87,57 +88,62 @@ class HomeController extends Controller{
     }
     
     public function saveData($data){
-        //save data to photos
-        //save data to address
-        //save data to mls
-        
-        //save data to 
-        foreach($data as $d){
-           
-            $listing = new Listing();
-            $listing->ListPrice = $d['ListPrice'];
-            $listing->ListingURL = $d['ListingURL'];
-            $listing->Bedrooms = $d['Bedrooms'];
-            $listing->Bathrooms = $d['Bathrooms'];
-            $listing->PropertyType = $d['PropertyType'];
-            $listing->ListingKey = $d['ListingKey'];
-            $listing->ListingCategory = $d['ListingCategory'];
-            $listing->ListingStatus = $d['ListingStatus'];
-            $listing->ListingDescription = $d['ListingDescription'];
-            $listing->save();
-            $lid = $listing->id;
-            
-            
-            //address info
-            $address = new Address();
-            $address->lid = $lid;
-            $address->FullStreetAddress = $d['FullStreetAddress'];
-            $address->City = $d['City'];
-            $address->StateOrProvince = $d['StateOrProvince'];
-            $address->PostalCode = $d['PostalCode'];
-            $address->Country = $d['Country'];
-            $address->save();
-            
-            //mls info
-            $mls = new MlsDetail();
-            $mls->lid = $lid;
-            $mls->MlsId = $d['MlsId'];
-            $mls->MlsName = $d['MlsName'];
-            $mls->MlsNumber = $d['MlsNumber'];
-            $mls->save();
+      
+            foreach($data as $d){
+
+                $listing = new Listing();
+                $listing->ListPrice = $d['ListPrice'];
+                $listing->ListingURL = $d['ListingURL'];
+                $listing->Bedrooms = $d['Bedrooms'];
+                $listing->Bathrooms = $d['Bathrooms'];
+                $listing->PropertyType = $d['PropertyType'];
+                $listing->ListingKey = $d['ListingKey'];
+                $listing->ListingCategory = $d['ListingCategory'];
+                $listing->ListingStatus = $d['ListingStatus'];
+                $listing->ListingDescription = $d['ListingDescription'];
                 
-            //Photo info
-            foreach ($d['Photos'] as $p){
-                $photo = new Photo();
-                $photo->lid = $lid;
-                $photo->MediaModificationTimestamp = (string)$p->MediaModificationTimestamp;
-                $photo->MediaURL = (string)$p->MediaURL;
-                $photo->save();
+                $list =  Listing::where('ListingKey',$listing->ListingKey)->first();
+                if($list==null||$list==""||$list===null){
+                    $listing->save(); 
+                }
+                else{
+                    return "failed";
+                }
                 
+                $lid = $listing->id;
+
+
+                //address info
+                $address = new Address();
+                $address->lid = $lid;
+                $address->FullStreetAddress = $d['FullStreetAddress'];
+                $address->City = $d['City'];
+                $address->StateOrProvince = $d['StateOrProvince'];
+                $address->PostalCode = $d['PostalCode'];
+                $address->Country = $d['Country'];
+                $address->save();
+
+                //mls info
+                $mls = new MlsDetail();
+                $mls->lid = $lid;
+                $mls->MlsId = $d['MlsId'];
+                $mls->MlsName = $d['MlsName'];
+                $mls->MlsNumber = $d['MlsNumber'];
+                $mls->save();
+
+                //Photo info
+                foreach ($d['Photos'] as $p){
+                    $photo = new Photo();
+                    $photo->lid = $lid;
+                    $photo->MediaModificationTimestamp = (string)$p->MediaModificationTimestamp;
+                    $photo->MediaURL = (string)$p->MediaURL;
+                    $photo->save();
+
+                }
+
             }
-           
-        }
-        //return true;
+            return "success";
+        
     }
     
     public function getListings(){

@@ -24,7 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->call(function () {
+            //the job : I can call any cotroller method or any command
+        })->timezone('America/New_York')->dailyAt('14:00');
     }
 }

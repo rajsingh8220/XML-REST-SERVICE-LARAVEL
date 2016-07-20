@@ -1,4 +1,14 @@
  <?php 
+ if($data['saveMsg']=="success"){
+     echo "Successfully Saved Data";
+     
+ }
+ else{
+     print_r($data['saveMsg']);
+     echo "<br><b>Data Aleready Exist, Please check your XML File</b>";
+     echo "<br>";
+     exit();
+ }
  if($data['status']=="failed"){
      echo "<b style='color:red;'>Please check your input file and the file format</b>";
  }
